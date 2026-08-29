@@ -1,0 +1,8 @@
+{
+  "callback_stream": "responses-tasks",
+  "consumer_group": "notifier-group",
+  "message_id": "2",
+  "playload": "{\"app\": \"app_name/cache-service\",\"key\": \"key\",\"data\": \"要保存的数据\"}",
+  "reply_id": "-1",
+  "service_name": "get_and_set"
+}

@@ -1,0 +1,7 @@
+go 1.25.0
+
+use (
+	./MyTool
+	./microservice/calculator-client
+	./microservice/calculator-service
+)
