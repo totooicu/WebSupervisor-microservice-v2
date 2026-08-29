@@ -73,28 +73,47 @@ func NewShardManager(outChan chan<- *StreamMessage) *ShardManager {
 }
 
 func (sm *ShardManager) Add(msg *StreamMessage) {
-	key := msg.MessageID
-	sm.mu.Lock()
-	assembler, ok := sm.assemblers[key]
-	if !ok {
-		assembler = NewShardingAssembler(msg.Sharding.Total)
-		sm.assemblers[key] = assembler
-		go func(k string, as *ShardingAssembler) {
-			select {
-			case fullMsg := <-as.Done():
-				sm.outChan <- fullMsg
-				sm.mu.Lock()
-				delete(sm.assemblers, k)
-				sm.mu.Unlock()
-			case <-time.After(30 * time.Second):
-				sm.mu.Lock()
-				delete(sm.assemblers, k)
-				sm.mu.Unlock()
-			}
-		}(key, assembler)
-	}
-	sm.mu.Unlock()
-	assembler.Add(msg)
+    key := msg.MessageID
+    sm.mu.Lock()
+    assembler, ok := sm.assemblers[key]
+    if !ok {
+        assembler = NewShardingAssembler(msg.Sharding.Total)
+        sm.assemblers[key] = assembler
+
+        // 启动清理 goroutine，使用动态超时
+        go func(k string, as *ShardingAssembler, deadline int64) {
+            var timeout <-chan time.Time
+            if deadline > 0 {
+                deadlineTime := time.UnixMilli(deadline)
+                if time.Now().After(deadlineTime) {
+                    // 已过期，立即清理
+                    sm.mu.Lock()
+                    delete(sm.assemblers, k)
+                    sm.mu.Unlock()
+                    return
+                }
+                timeout = time.After(time.Until(deadlineTime))
+            } else {
+                timeout = time.After(30 * time.Second)
+            }
+
+            select {
+            case fullMsg := <-as.Done():
+                // 重组成功，投递给 outChan
+                sm.outChan <- fullMsg
+                sm.mu.Lock()
+                delete(sm.assemblers, k)
+                sm.mu.Unlock()
+            case <-timeout:
+                // 超时未完成重组，清理
+                sm.mu.Lock()
+                delete(sm.assemblers, k)
+                sm.mu.Unlock()
+            }
+        }(key, assembler, msg.Deadline)
+    }
+    sm.mu.Unlock()
+    assembler.Add(msg)
 }
 
 // sendSharded 将大数据消息分片发送到目标 Stream

@@ -8,8 +8,11 @@
     "name": "calculator-stream",
     "consumer_group": "calculator-group",
     "goroutine_num": 5,
-    "get_timeout_ms": 500,
-    "max_message_bytes": 204800
+    "get_timeout_ms": 5000,
+    "max_message_bytes": 2048
   },
-  "custom": {}
+  "custom": {
+
+    
+  }
 }

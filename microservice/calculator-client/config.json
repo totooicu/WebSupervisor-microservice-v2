@@ -8,8 +8,8 @@
     "name": "client-stream",
     "consumer_group": "client-group",
     "goroutine_num": 5,
-    "get_timeout_ms": 5000,
-    "max_message_bytes": 204800
+    "get_timeout_ms": 50000,
+    "max_message_bytes": 2048
   },
   "custom": {
     "calculator-stream": "calculator-stream"

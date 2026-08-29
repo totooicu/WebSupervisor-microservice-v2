@@ -1,9 +1,20 @@
 package stream
 
 import (
-
+	"log"
 	"time"
 )
+
+
+// handlePing 处理 ping 请求，返回当前协程使用情况
+func handlePing(msg *StreamMessage) {
+	stats := getGoroutineStats()
+	err := Response(msg, stats, 0, "")
+	if err != nil {
+		log.Printf("ping response error: %v\n", err)
+	}
+}
+
 
 func handleResponse(msg *StreamMessage) {
 	if msg.Sharding.Total == 0 {
@@ -45,3 +56,22 @@ func handleResponse(msg *StreamMessage) {
 	mutex.Unlock()
 	assembler.Add(msg)
 }
+
+
+// func handelShard(msg *StreamMessage) {
+// 	select {
+// 		case rmsg := <-reassembledChan:
+// 			semaphore <- struct{}{}
+// 			go func(m *StreamMessage) {
+// 				defer func() { <-semaphore }()
+// 				dispatch(m)
+// 			}(rmsg)
+// 		default:
+// 		}
+	
+
+// 	if msg.Sharding.Total > 0 {
+// 		shardManager.Add(msg)
+// 	}
+// }
+

@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"time"
 
+	"log"
+
 	"github.com/go-redis/redis/v8"
 )
 
@@ -115,4 +117,26 @@ func Response(originalMsg *StreamMessage, result map[string]interface{}, errCode
 func generateID() string {
 	id, _ := redisClient.Incr(ctx, "stream:msg:id").Result()
 	return fmt.Sprintf("%d-%d", time.Now().UnixNano(), id)
+}
+
+func ReadOne(ctx context.Context, consumerName string) (*redis.XMessage, error) {
+	streams, err := redisClient.XReadGroup(ctx, &redis.XReadGroupArgs{
+		Group:    ConsumerGroup,
+		Consumer: consumerName,
+		Streams:  []string{StreamName, ">"},
+		Count:    1,
+		Block:    0,
+	}).Result()
+
+	if err != nil {
+		log.Println("XReadGroup error:", err)
+		return nil, err
+	}
+
+	var xmsg redis.XMessage
+		for _, stream := range streams {
+		for _, message := range stream.Messages {
+			xmsg=message
+		}}
+	return &xmsg, nil
 }
