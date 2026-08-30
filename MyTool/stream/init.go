@@ -4,6 +4,21 @@ package stream
 import (
 	"fmt"
 	"time"
+	"sync"
+)
+type HandlerFunc func(msg *StreamMessage)
+var (
+	HANDELS           = make(map[string]HandlerFunc)
+	RESPONSES         = make(map[string]chan *StreamMessage)
+	SHARDING_RESPONSES = make(map[string]*ShardingAssembler)
+	mutex             sync.RWMutex
+	semaphore         chan struct{}
+	consumerStream      string
+	activeHandlers    int32 // 当前正在执行的业务 handler 数量
+
+	reassembledChan = make(chan *StreamMessage, 100)// 分片重组完成的消息通道
+	shardManager = NewShardManager(reassembledChan)// 分片管理器
+
 )
 func RegisterService(name string, handler HandlerFunc) {
 	mutex.Lock()
@@ -17,7 +32,7 @@ func Init() error {
 	if err := InitClient(); err != nil {
 		return err
 	}
-	consumerName = fmt.Sprintf("%s-%d", ServiceName, time.Now().UnixNano())
+	consumerStream = fmt.Sprintf("%s-%d", ServiceName, time.Now().UnixNano())
 	semaphore = make(chan struct{}, cfg.Stream.GoroutineNum)
 
 	// 注册内置响应处理

@@ -1,0 +1,87 @@
+package actions
+
+import (
+	"fmt"
+	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/totooicu/web_supervisor-manager/models"
+	"github.com/totooicu/web_supervisor-manager/services"
+)
+
+func run_one(job *models.Job) {
+	//发送http请求
+	pld, err := services.Crawl(&job.Crawler)
+	if err != nil || (pld["status"]!= nil && pld["status"].(float64) != 200) {
+		log.Warnf("Error - Crawl: %v | status: %v", err, pld["status"])
+		return
+	}
+	job.Keys.Content = pld["content"].(string)
+	//解析html
+	tgt, err := services.Parse(&job.Keys)
+	if err != nil {
+		log.Warnf("Error - Parse: %v", err)
+		return
+	}
+	log.Printf(">>> Debug - tgt: %+v", len(tgt))
+	pd := tgt["parsed_data"].(map[string]any) //->map[string][]any
+	//缓存与匹配
+	//准备数据
+	newCaches := make([]models.CacheParameter, len(pd))
+	i := 0
+	changed_new_datas := []*models.CacheParameter{} //->map[key][old,new]
+	for k, v := range pd {
+		key:=fmt.Sprintf("%s:%s",job.Crawler.URL,k)
+		newCaches[i] = models.CacheParameter{models.REDIS_APP_NAME, key, v}
+		log.Printf(">>> Debug - k: %s\n", newCaches[i].Key)
+		r, e := services.CacheCompareAndSave(&newCaches[i])
+		log.Printf(">>> Debug - r: %+v\n", r)
+		if e != nil { //缓存不存在
+			log.Warnf("Error - CacheCompareAndSave: %v\n", e)
+			rr, e := services.CacheSet(&newCaches[i])
+			if e != nil {
+				log.Warnf("Error - CacheSet: %v\n", e)
+				continue
+			}
+			
+			if rr["error"] != nil && rr["error"].(string) != "" {
+				log.Warnf("Error - CacheSet: %v\n", rr["error"])
+				continue
+			}
+			changed_new_datas = append(changed_new_datas, &newCaches[i])
+			continue
+		}
+		if r["changed"].(bool) { //记录变更的数据
+			changed_new_datas = append(changed_new_datas, &newCaches[i])
+		}
+		i++
+	}
+
+	//if changed_new_datas is empty
+	if len(changed_new_datas) == 0 {
+		return
+	}
+	job.Caches = newCaches
+	services.EmailNoticeChanged(&changed_new_datas, &job.Crawler.URL)
+
+	log.Infof(">>>执行任务成功")//绿色
+
+}
+func runs() {
+	var i int64=0 
+	for{
+			for i,job:=range models.JOBS{
+			log.Printf(">>>执行任务%d %v\n",i,job)
+			run_one(&job)
+		}
+		i++
+		log.Infof(">>>执行次数：%d 完成",i)
+		for ii:=0;ii<models.INTERVAL_SECONDS;ii++{
+			fmt.Printf(">>>等待%d秒，还需等待%d秒\r",ii,models.INTERVAL_SECONDS-ii)
+			time.Sleep(time.Second)
+		}
+		
+	}
+
+
+}

@@ -2,6 +2,11 @@ go 1.25.0
 
 use (
 	./MyTool
-	./microservice/calculator-client
+	./microservice/microservice-manager
 	./microservice/calculator-service
+	./microservice/redis_cache-service
+	./microservice/email-service
+	./microservice/crawler-service
+	./microservice/parser-service
+	./microservice/web_supervisor-manager
 )

@@ -1,4 +1,4 @@
-package MyTool
+package parser
 
 import (
 	"fmt"

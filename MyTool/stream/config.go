@@ -22,7 +22,7 @@ type RedisConfig struct {
 }
 
 type StreamConfig struct {
-    Name               string `json:"name"`
+    ConsumerStream               string `json:"consumer_stream"`
     ConsumerGroup      string `json:"consumer_group"`
     GoroutineNum       int    `json:"goroutine_num"`
     GetTimeoutMs       int    `json:"get_timeout_ms"`   // 单位：毫秒
@@ -53,8 +53,8 @@ func LoadConfig(path string) error {
 	}
 
 	// 设置全局变量
-	StreamName = cfg.Stream.Name
-	ServiceName = cfg.Stream.Name // 简化
+	StreamName = cfg.Stream.ConsumerStream
+	ServiceName = cfg.Stream.ConsumerStream // 简化
 	ConsumerGroup = cfg.Stream.ConsumerGroup
 	MaxMsgSize = cfg.Stream.MaxMessageBytes
 	if MaxMsgSize <= 0 {

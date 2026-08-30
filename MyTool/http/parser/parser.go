@@ -1,4 +1,4 @@
-package MyTool
+package parser
 
 import (
 	"encoding/json"
@@ -24,18 +24,19 @@ func ParseHTML(content string, keys []string) []string {
 	return results
 }
 
-func ParseJSON(content string, jsonKeys []string) []interface{} {
+
+func ParseJSON(content string, jsonKeys []string) map[string][]any {
 	var data interface{}
 	if err := json.Unmarshal([]byte(content), &data); err != nil {
 		return nil
 	}
-	
-	var results []interface{}
-	
+		
+	var results map[string][]any = make(map[string][]any)
+		
 	for _, key := range jsonKeys {
 		value := GetJSONValue(data, strings.Split(key, "."))
 		if value != nil {
-			results = append(results, value)
+			results[key] = append(results[key], value)
 		}
 	}
 	

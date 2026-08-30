@@ -1,4 +1,4 @@
-package MyTool
+package http
 
 import (
 	myjson "github.com/totooicu/go-mytool/json"
@@ -98,6 +98,6 @@ func (this *HttpHeader) Close() {
 		return
 	}
 }
-func (this *HttpHeader) JsonBodyOperate() myjson.MyJson {
-	return myjson.MyJson{}
+func (this *HttpHeader) JsonBodyOperate() myjson.JSONNavigator {
+	return myjson.JSONNavigator{}
 }

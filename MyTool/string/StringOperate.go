@@ -1,4 +1,4 @@
-package MyTool
+package string
 
 import (
 	"regexp"
@@ -97,3 +97,4 @@ func GetMid(src, rlstr, rrstr string, op byte) []string {
 	}
 	return res
 }
+

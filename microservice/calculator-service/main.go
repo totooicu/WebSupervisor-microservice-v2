@@ -16,8 +16,6 @@ func main() {
 
 	// 注册服务（不在 action 中）
 	stream.RegisterService("add", services.HandleAdd)
-	// stream.RegisterService("subtract", services.HandleSubtract)
-	// stream.RegisterService("multiply", services.HandleMultiply)
 	stream.RegisterService("divide", services.HandleDivide)
 
 	log.Println("Calculator service started")

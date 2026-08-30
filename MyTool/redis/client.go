@@ -18,8 +18,12 @@ type Client struct {
 }
 
 func NewClient(host string, port int, password string, db int) *Client {
+	addr:= fmt.Sprintf("%s:%d", host, port)
+	if port==-1{
+		addr=host
+	}
 	client := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", host, port),
+		Addr:     addr,
 		Password: password,
 		DB:       db,
 	})
@@ -139,10 +143,11 @@ func (c *Client) SetKey(key string, value interface{}, expiration time.Duration)
 	if err != nil {
 		return err
 	}
-	return c.client.Set(c.ctx, key, string(data), expiration).Err()
+	err=c.client.Set(c.ctx, key, string(data), expiration).Err()
+	return err
 }
 
-func (c *Client) GetKey(key string, dest interface{}) error {
+func (c *Client) GetKey(key string, dest any) error {
 	data, err := c.client.Get(c.ctx, key).Result()
 	if err != nil {
 		return err

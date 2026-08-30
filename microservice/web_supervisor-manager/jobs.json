@@ -1,0 +1,401 @@
+{
+  "projectName": "test",
+  "header": {},
+  "intervalSecond": 120,
+  "urls": [
+    {
+      "url": "https://sci.zstu.edu.cn/zsjy/yjszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {
+                "Accept-Encoding": "gzip, deflate"
+
+      },
+      "type": "html",
+      "jsonKeys": [],
+      "xPathKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<div class=\"main-right-text\">",
+          "right": "<script>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://cmt.zstu.edu.cn/zsjy/yjszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<li id=\"line_u9_\\d+\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://mse.zstu.edu.cn/zsxx.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<div class=\"list_plaintext mt\">",
+          "right": "</div>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://fzxy.zstu.edu.cn/zsjy2/yjszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<li id=\"line_u6_\\d+\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://mechanical.zstu.edu.cn/yjsjy/zsxx.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<li id=\"line_u10_\\d+\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://jsjxy.zstu.edu.cn/zsjy1/ssszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<dd id=\"line_u9_\\d+\">",
+          "right": "</dd>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://sise.zstu.edu.cn/dasd/ssszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<ul class=\"list\" style=\"min-height:550px\">",
+          "right": "<div align=\"center\">",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://jiangong.zstu.edu.cn/index/tzgg.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<span class=\"ddd\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://sky.zstu.edu.cn/tzgg.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<ul>",
+          "right": "</ul>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://scce.zstu.edu.cn/zsjy/yjszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<li id=\"line_u10_\\d+\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://sem.zstu.edu.cn/jxx/ssxm.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<dd id=\"line_u8_\\d+\">",
+          "right": "</dd>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://ad.zstu.edu.cn/zsjy/yjszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<li id=\"line_u8_\\d+\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://law.zstu.edu.cn/zsjy/yjszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<dd id=\"line_u8_\\d+\">",
+          "right": "</dd>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://waiyu.zstu.edu.cn/yjsjy.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<li id=\"line_u7_\\d+\">",
+          "right": "</li>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://mks.zstu.edu.cn/yjsjy1/zs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<LI id=\"line_u7_\\d+\">",
+          "right": "</LI>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://yjs.suda.edu.cn/8386/list.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "gradadmission.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<ul>",
+          "right": "</ul>",
+          "key": [".*"]
+        }
+      ]
+    },
+    {
+      "url": "https://gradadmission.zstu.edu.cn/sszs.htm",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": {
+        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+        "Accept": "*/*",
+        "Host": "jwc.zstu.edu.cn",
+        "Connection": "keep-alive"
+      },
+      "method": "GET",
+      "body": {},
+
+      "type": "html",
+      "jsonKeys": [],
+      "htmlKeys": [
+        {
+          "left": "<ul>",
+          "right": "</ul>",
+          "key": [".*"]
+        }
+      ]
+    }
+  ]
+}

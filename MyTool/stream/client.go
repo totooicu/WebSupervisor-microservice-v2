@@ -43,7 +43,6 @@ func Send(targetStream, targetService string, payload map[string]interface{}, ti
 		}
 	}
 
-
 	msgID := generateID()
 	respChan := make(chan *StreamMessage, 1)
 	mutex.Lock()
@@ -59,7 +58,7 @@ func Send(targetStream, targetService string, payload map[string]interface{}, ti
 	msg := &StreamMessage{
 		MessageID:      msgID,
 		ServiceName:    targetService,
-		CallbackStream: StreamName,     // ✅ 正确：指向客户端自己的 Stream
+		CallbackStream: StreamName,     // 
 		SourceStream:   StreamName,
 		SourceService:  ServiceName,
 		Playload:       payload,
@@ -83,10 +82,19 @@ func Send(targetStream, targetService string, payload map[string]interface{}, ti
 		
 	select {
 	case resp := <-respChan:
+		if resp.ErrCode != 0 {
+			return resp,fmt.Errorf("%v", resp.ErrMsg)
+		}
 		return resp, nil
 	case <-time.After(time.Duration(Deadline-time.Now().UnixMilli()) * time.Millisecond):
 		return nil, errors.New("request timeout")
 	}
+}
+func ResponseErr(originalMsg *StreamMessage, errMsg string)error{
+	return Response(originalMsg,nil,1,errMsg)
+}
+func ResponseSucc(originalMsg *StreamMessage, result map[string]interface{})error{
+	return Response(originalMsg,result,0,"")
 }
 
 // Response 发送响应消息
@@ -96,8 +104,8 @@ func Response(originalMsg *StreamMessage, result map[string]interface{}, errCode
 		ReplyID:        originalMsg.MessageID,
 		ServiceName:    "response",
 		CallbackStream: originalMsg.CallbackStream,
-		SourceStream:   originalMsg.SourceStream,
-		SourceService:  originalMsg.SourceService,
+		SourceStream:   StreamName,
+		SourceService:  originalMsg.ServiceName,
 		Playload:       result,
 		Sharding:       ShardingInfo{Total: 0},
 		ErrCode:        errCode,

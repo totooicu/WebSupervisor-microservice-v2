@@ -4,32 +4,12 @@ import (
 
 	"log"
 	"runtime"
-	"sync"
 	"sync/atomic"
 	"time"
 	"strings"
 
 	// "github.com/go-redis/redis/v8"
 )
-
-var (
-	HANDELS           = make(map[string]HandlerFunc)
-	RESPONSES         = make(map[string]chan *StreamMessage)
-	SHARDING_RESPONSES = make(map[string]*ShardingAssembler)
-	mutex             sync.RWMutex
-	semaphore         chan struct{}
-	consumerName      string
-	activeHandlers    int32 // 当前正在执行的业务 handler 数量
-
-	reassembledChan = make(chan *StreamMessage, 100)// 分片重组完成的消息通道
-	shardManager = NewShardManager(reassembledChan)// 分片管理器
-
-)
-
-	
-type HandlerFunc func(msg *StreamMessage)
-
-
 
 // ensureConsumerGroup 创建消费者组，如果组已存在则忽略错误
 func ensureConsumerGroup() error {
@@ -54,7 +34,7 @@ func consumeLoop() {
 		default:
 		}
 
-		message,err:=ReadOne(ctx, consumerName)
+		message,err:=ReadOne(ctx, consumerStream)
 		if err!= nil {
 			log.Println("ReadOne error:", err)
 			continue

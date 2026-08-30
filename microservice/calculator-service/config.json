@@ -5,14 +5,14 @@
     "db": 0
   },
   "stream": {
-    "name": "calculator-stream",
+    "consumer_stream": "dev:calculator-stream",
     "consumer_group": "calculator-group",
     "goroutine_num": 5,
     "get_timeout_ms": 5000,
-    "max_message_bytes": 2048
+    "max_message_bytes": 204800
   },
   "custom": {
 
-    
+
   }
 }
