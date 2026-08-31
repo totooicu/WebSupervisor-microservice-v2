@@ -35,6 +35,12 @@ func NewClient(host string, port int, password string, db int) *Client {
 		ctx:    ctx,
 	}
 }
+func GetClient(client *redis.Client,ctx context.Context)*Client {
+	return &Client{
+		client: client,
+		ctx:    ctx,
+	}
+}
 
 func (c *Client) Close() error {
 	return c.client.Close()
@@ -134,19 +140,31 @@ func (c *Client) ReadMessages(stream, group, consumer string, count, block int64
 	return messages, nil
 }
 
-func (c *Client) AcknowledgeMessage(stream, group, id string) error {
-	return c.client.XAck(c.ctx, stream, group, id).Err()
+// func (c *Client) AcknowledgeMessage(stream, group, id string) error {
+// 	return c.client.XAck(c.ctx, stream, group, id).Err()
+// }
+func SetKey(r *redis.Client,ctx context.Context, key string, value any, expiration_ms_int64 time.Duration) error {
+	c:=Client{
+		client: r,
+		ctx:    ctx,
+	}
+	return c.SetKey(key, value, expiration_ms_int64)
 }
-
-func (c *Client) SetKey(key string, value interface{}, expiration time.Duration) error {
+func (c *Client) SetKey(key string, value interface{}, expiration_ms_int64 time.Duration) error {
 	data, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
-	err=c.client.Set(c.ctx, key, string(data), expiration).Err()
+	err=c.client.Set(c.ctx, key, string(data), expiration_ms_int64).Err()
 	return err
 }
-
+func GetKey(r *redis.Client,ctx context.Context, key string, dest any) error {
+	c:=Client{
+		client: r,
+		ctx:    ctx,
+	}
+	return c.GetKey(key, dest)
+}
 func (c *Client) GetKey(key string, dest any) error {
 	data, err := c.client.Get(c.ctx, key).Result()
 	if err != nil {
@@ -155,6 +173,13 @@ func (c *Client) GetKey(key string, dest any) error {
 	return json.Unmarshal([]byte(data), dest)
 }
 
+func DeleteKey(r *redis.Client,ctx context.Context, key string) error {
+	c:=Client{
+		client: r,
+		ctx:    ctx,
+	}
+	return c.DeleteKey(key)
+}
 func (c *Client) DeleteKey(key string) error {
 	return c.client.Del(c.ctx, key).Err()
 }

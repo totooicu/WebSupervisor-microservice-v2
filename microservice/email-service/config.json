@@ -9,7 +9,8 @@
     "consumer_group": "email-group",
     "goroutine_num": 5,
     "get_timeout_ms": 5000,
-    "max_message_bytes": 204800
+    "max_message_bytes": 204800,
+    "cache_key_prefix":"email:"
   },
   "custom": {
     "default_email": "qq_email",

@@ -10,8 +10,13 @@ import (
 )
 
 func Crawl(p *models.CrawlerParameter) (map[string]any, error) {
+	log.Printf(">>> Debug - Send http_request")
 	streamMsg, err := stream.Send(models.CRAWLER_SERVICE, "http_request", json.StructToMap(p), 1000*60*2) //->{"content":"","status":0}
+	log.Printf("<<< Debug - Send http_request ok")
 	if err != nil {
+		// if streamMsg.ErrMsg =="" {
+		// 	return nil, fmt.Errorf("Error - Send message to stream: %v", err)
+		// }
 		log.Warnf("Crawl Error - Send message to stream: err:%v | msg:%v", err, streamMsg.ErrMsg)
 		return nil, err
 	}
@@ -41,12 +46,12 @@ func Parse(p *models.ParserParameter) (map[string]any, error) {
 		p.HTMLKeys[0]["keys"] = []string{".*"}
 	}
 	log.Printf(">>> Debug - serv: %s", serv)
-
+	log.Printf(">>> Debug - send parse request ")
 	streamMsg, err := stream.Send(models.PARSER_SERVICE, serv, json.StructToMap(p), 1000*10)
 	//parse_html_by_xpath->{"parsed_data":map[string]([]string)}, parsed_data[xpath]=[content]
 	//parse_html_by_get_mid->{"parsed_data":map[string]([]string)[]string}, parsed_data[key]=[content], key:=fmt.Sprintf("[%s,%s,%s]",params.HTMLKeys[ii].Left,params.HTMLKeys[ii].Right,params.HTMLKeys[ii].Keys)
 	//parse_json->{"parsed_data":map[string]([]any)}, parsed_data[jsonpath]=[value]
-
+	log.Printf("<<< Debug - send parse request ok")
 	if err != nil {
 		log.Warnf("Error - Send message to stream: %v", err)
 		return nil, err
@@ -54,7 +59,9 @@ func Parse(p *models.ParserParameter) (map[string]any, error) {
 	return streamMsg.Playload, nil
 }
 func CacheCompareAndSave(p *models.CacheParameter) (map[string]any, error) {
+	log.Printf(">>> Debug - send CacheCompareAndSave")
 	streamMsg, err := stream.Send(models.REDIS_CACHE_SERVICE, "compare_and_save", json.StructToMap(p), 1000*10) //->{"changed":true}
+	log.Printf("<<< Debug - CacheCompareAndSave ok")
 	if err != nil {
 		log.Warnf("Error - Send message to stream: %v", err)
 		return nil, err
@@ -66,7 +73,9 @@ func CacheCompareAndSave(p *models.CacheParameter) (map[string]any, error) {
 	return streamMsg.Playload, nil
 }
 func CacheSet(p *models.CacheParameter) (map[string]any, error) {
+	log.Printf(">>> Debug - send CacheSet")
 	streamMsg, err := stream.Send(models.REDIS_CACHE_SERVICE, "set", json.StructToMap(p), 1000*10) //->{"key":"",error:""}
+	log.Printf("<<< Debug - CacheSet ok")
 	if err != nil {
 		log.Warnf("Error - Send message to stream: %v", err)
 		return nil, err
@@ -102,10 +111,33 @@ func EmailNoticeChanged(p *[]*models.CacheParameter, url *string) (map[string]an
 			Body:    content,
 		},
 	}
+	log.Printf(">>> Debug - send email_by_config")
 	streamMsg, err := stream.Send(models.EMAIL_SERVICE, "email_by_config", json.StructToMap(sender), 1000*10) //->{nil}
+	log.Printf("<<< Debug - send email_by_config ok")
 	if err != nil {
 		log.Warnf("Error - Send message to stream: %v", err)
 		return nil, err
 	}
 	return streamMsg.Playload, nil
+}
+
+func PingServices()(string,error) { 
+	status:=""
+	if s, err := stream.SendPing(models.CRAWLER_SERVICE);err != nil {
+		status+=fmt.Sprintf("Crawler_service:%s\n",s.Playload)
+		return status,err
+	}
+	if s, err := stream.SendPing(models.PARSER_SERVICE);err != nil {
+		status+=fmt.Sprintf("Parser_service:%s\n",s.Playload)
+		return status,err
+	}
+	if s, err := stream.SendPing(models.REDIS_CACHE_SERVICE);err != nil {
+		status+=fmt.Sprintf("Redis_cache_service:%s\n",s.Playload)
+		return status,err
+	}
+	if s, err := stream.SendPing(models.EMAIL_SERVICE);err != nil {
+		status+=fmt.Sprintf("Email_service:%s\n",s.Playload)
+		return status,err
+	}
+	return status,nil
 }

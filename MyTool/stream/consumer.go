@@ -42,12 +42,12 @@ func consumeLoop() {
 		msg, err := FromMap(message.Values)
 		if err != nil {
 			log.Println("parse error:", err)
-			redisClient.XAck(ctx, StreamName, ConsumerGroup, message.ID)
+			AckAndDelete(ctx, StreamName, ConsumerGroup, message.ID)
 			continue
 		}
 		//超时丢弃消息
 		if msg.Deadline > 0&&time.UnixMilli(msg.Deadline).Before(time.Now()) {
-			redisClient.XAck(ctx, StreamName, ConsumerGroup, message.ID)
+			AckAndDelete(ctx, StreamName, ConsumerGroup, message.ID)
 			continue
 		}
 		
@@ -56,7 +56,7 @@ func consumeLoop() {
 			go func(m *StreamMessage, msgID string) {
 				// handlePing(m)
 				HANDELS["ping"](m)
-				redisClient.XAck(ctx, StreamName, ConsumerGroup, msgID)
+				AckAndDelete(ctx, StreamName, ConsumerGroup, msgID)
 			}(msg, message.ID)
 		
 			continue
@@ -66,7 +66,7 @@ func consumeLoop() {
 		if msg.Sharding.Total > 0 {
 			shardManager.Add(msg)
 			// HANDELS["shard"](msg)
-			redisClient.XAck(ctx, StreamName, ConsumerGroup, message.ID)
+			AckAndDelete(ctx, StreamName, ConsumerGroup, message.ID)
 			continue
 		}
 
@@ -75,7 +75,7 @@ func consumeLoop() {
 		go func(m *StreamMessage, msgID string) {
 			defer func() { <-semaphore }()
 			dispatch(m)
-			redisClient.XAck(ctx, StreamName, ConsumerGroup, msgID)
+			AckAndDelete(ctx, StreamName, ConsumerGroup, msgID)
 		}(msg, message.ID)
 	}
 }

@@ -5,7 +5,7 @@
     "db": 0
   },
   "stream": {
-    "consumer_stream": "dev:web_supervisor-stream",
+    "consumer_stream": "dev:web_supervisor-stream1",
     "consumer_group": "web_supervisor-group",
     "goroutine_num": 5,
     "get_timeout_ms": 50000,

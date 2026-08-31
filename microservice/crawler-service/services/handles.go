@@ -1,11 +1,13 @@
 package services
 
 import (
-	"github.com/totooicu/go-mytool/stream"
-	"github.com/totooicu/crawler-service/models"
-	log "github.com/sirupsen/logrus"
 	"encoding/json"
+	// "time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/totooicu/crawler-service/models"
 	"github.com/totooicu/go-mytool/http"
+	"github.com/totooicu/go-mytool/stream"
 )
 
 func HandleHttpRequestHttpRequest(msg *stream.StreamMessage) {
@@ -45,7 +47,6 @@ func HandleHttpRequestHttpRequest(msg *stream.StreamMessage) {
 		statusCode = httpClient.GetStatusCode()
 	default:
 		log.Printf("Unsupported method: %s", params.Method)
-		
 		return
 	}
 
@@ -56,6 +57,13 @@ func HandleHttpRequestHttpRequest(msg *stream.StreamMessage) {
 		log.Printf("Debug - HTTP response status code: %d", statusCode)
 	}
 	log.Printf(">>>handleHttpRequest response: %s", len(response))
+
+	// response,err= stream.CacheSet(params.URL,response,1*time.Hour)
+	// if err!= nil{
+	// 	log.Printf("Error cache set: %v", err)
+	// 	return
+	// }
+	
 	// 构造响应消息
 	paramData := map[string]interface{}{
 		"content": response,

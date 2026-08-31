@@ -70,7 +70,14 @@ func run_one(job *models.Job) {
 func runs() {
 	var i int64=0 
 	for{
-			for i,job:=range models.JOBS{
+		if status,err:= services.PingServices(); err!= nil {
+			log.Warnf("Error - ping_services: %v | status: %s\n", status,err)
+			time.Sleep(time.Second)
+			continue
+		}else{
+			log.Infof(">>>执行ping成功:%s",status)//绿色
+		}
+		for i,job:=range models.JOBS{
 			log.Printf(">>>执行任务%d %v\n",i,job)
 			run_one(&job)
 		}

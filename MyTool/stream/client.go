@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"log"
-
+	myredis "github.com/totooicu/go-mytool/redis"
+	"github.com/totooicu/go-mytool/encryption"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -25,6 +26,20 @@ func InitClient() error {
 	})
 	_, err := redisClient.Ping(ctx).Result()
 	return err
+}
+func AckAndDelete(ctx context.Context, StreamName , ConsumerGroup, msgID string) error {
+	if msgID == "" {
+		return errors.New("msgID is empty")
+	}
+	err := redisClient.XAck(ctx, StreamName, ConsumerGroup, msgID).Err()
+	if err != nil {
+		return err
+	}
+	err = redisClient.XDel(ctx, StreamName, msgID).Err()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Send 发送请求并等待响应
@@ -90,6 +105,10 @@ func Send(targetStream, targetService string, payload map[string]interface{}, ti
 		return nil, errors.New("request timeout")
 	}
 }
+func SendPing(StreamName string)  (*StreamMessage, error) {
+	return Send(StreamName, "ping", nil, 0)
+}
+
 func ResponseErr(originalMsg *StreamMessage, errMsg string)error{
 	return Response(originalMsg,nil,1,errMsg)
 }
@@ -147,4 +166,18 @@ func ReadOne(ctx context.Context, consumerName string) (*redis.XMessage, error) 
 			xmsg=message
 		}}
 	return &xmsg, nil
+}
+
+func GetMyRedisClient() *myredis.Client {
+	return myredis.GetClient(redisClient,ctx)
+}
+func CacheSet(key string, value interface{}, expiration_ms_int64 time.Duration)( string,error) {
+	nkey:=fmt.Sprintf("%s%s:%v",CacheKeyPrefix,key,encryption.HashMD5(fmt.Sprintf("%v",value)))
+	return nkey,GetMyRedisClient().SetKey( nkey, value, expiration_ms_int64)
+}
+func CacheGet(key string, dest interface{}) error {
+	return GetMyRedisClient().GetKey(key, dest)
+}
+func CacheDelete(key string) error {
+	return GetMyRedisClient().DeleteKey(key)
 }
