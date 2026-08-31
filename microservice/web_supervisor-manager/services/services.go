@@ -2,12 +2,17 @@ package services
 
 import (
 	"fmt"
+	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/totooicu/go-mytool/encryption"
 	"github.com/totooicu/go-mytool/json"
 	"github.com/totooicu/go-mytool/stream"
 	"github.com/totooicu/web_supervisor-manager/models"
 )
+
+// 错误去重缓存有效期：同一签名在此期间重复出现只向管理员告警一次
+var errorDedupTTL = 24 * time.Hour
 
 func Crawl(p *models.CrawlerParameter) (map[string]any, error) {
 	log.Printf(">>> Debug - Send http_request")
@@ -98,11 +103,11 @@ func EmailNoticeChanged(p *[]*models.CacheParameter, url *string) (map[string]an
 	content := ""
 
 	for i, v := range *p {
-		c:= fmt.Sprintf(">>>%d\t%s:%s\n", i, v.Key, v.Data)
-		c=c[:min(len(c), 1000)]
+		c := fmt.Sprintf(">>>%d\t%s:%s\n", i, v.Key, v.Data)
+		c = c[:min(len(c), 1000)]
 		content += c
-		}
-	content=content[:(min(len(content), 100000))]
+	}
+	content = content[:(min(len(content), 100000))]
 	sender := models.EmailRequestByConfig{
 		EmailChoose: "",
 		EmailContent: models.EmailContent{
@@ -121,23 +126,72 @@ func EmailNoticeChanged(p *[]*models.CacheParameter, url *string) (map[string]an
 	return streamMsg.Playload, nil
 }
 
-func PingServices()(string,error) { 
-	status:=""
-	if s, err := stream.SendPing(models.CRAWLER_SERVICE);err != nil {
-		status+=fmt.Sprintf("Crawler_service:%s\n",s.Playload)
-		return status,err
+func PingServices() (string, error) {
+	status := ""
+	if s, err := stream.SendPing(models.CRAWLER_SERVICE); err != nil {
+		status += fmt.Sprintf("Crawler_service:%s\n", s.Playload)
+		return status, err
 	}
-	if s, err := stream.SendPing(models.PARSER_SERVICE);err != nil {
-		status+=fmt.Sprintf("Parser_service:%s\n",s.Playload)
-		return status,err
+	if s, err := stream.SendPing(models.PARSER_SERVICE); err != nil {
+		status += fmt.Sprintf("Parser_service:%s\n", s.Playload)
+		return status, err
 	}
-	if s, err := stream.SendPing(models.REDIS_CACHE_SERVICE);err != nil {
-		status+=fmt.Sprintf("Redis_cache_service:%s\n",s.Playload)
-		return status,err
+	if s, err := stream.SendPing(models.REDIS_CACHE_SERVICE); err != nil {
+		status += fmt.Sprintf("Redis_cache_service:%s\n", s.Playload)
+		return status, err
 	}
-	if s, err := stream.SendPing(models.EMAIL_SERVICE);err != nil {
-		status+=fmt.Sprintf("Email_service:%s\n",s.Playload)
-		return status,err
+	if s, err := stream.SendPing(models.EMAIL_SERVICE); err != nil {
+		status += fmt.Sprintf("Email_service:%s\n", s.Playload)
+		return status, err
 	}
-	return status,nil
+	return status, nil
+}
+
+// ReportError 缓存错误到 Redis 并按需通知管理员。
+// 相同签名（url+stage+msg）在 errorDedupTTL 内重复出现时只缓存、不再发邮件，
+// 避免重复错误刷屏管理员。首次出现的错误才会发送告警邮件。
+func ReportError(jobURL, stage, msg string) {
+	signature := fmt.Sprintf("%s|%s|%s", jobURL, stage, msg)
+	key := models.REDIS_APP_NAME + ":err_dedup:" + encryption.HashMD5(signature)
+	rc := stream.GetMyRedisClient()
+
+	var existing string
+	if err := rc.GetKey(key, &existing); err == nil {
+		// 已缓存过该错误：重复，不发邮件
+		log.Warnf("Error (suppressed, already reported): %s", signature)
+		return
+	}
+	// 新错误：先缓存再通知
+	if err := rc.SetKey(key, signature, errorDedupTTL); err != nil {
+		log.Warnf("Error - cache error signature: %v", err)
+	}
+	sendAdminNotice(
+		fmt.Sprintf("[web_supervisor] %s @ %s", stage, jobURL),
+		fmt.Sprintf("URL: %s\nstage: %s\nerror: %s\n\n(相同错误将不会重复告警)", jobURL, stage, msg),
+	)
+}
+
+// sendAdminNotice 向管理员收件人发送告警邮件。未配置 email_tos_admin 时仅记录日志。
+func sendAdminNotice(subject, body string) {
+	if len(models.EMAIL_TOS_ADMINS) == 0 {
+		log.Warnf("[admin] no admin recipients configured, skip notice: %s", subject)
+		return
+	}
+	sender := models.EmailRequestByConfig{
+		EmailChoose: "",
+		EmailContent: models.EmailContent{
+			Tos:     models.EMAIL_TOS_ADMINS,
+			Subject: subject,
+			Body:    body,
+		},
+	}
+	log.Printf(">>> Debug - send admin notice: %s", subject)
+	streamMsg, err := stream.Send(models.EMAIL_SERVICE, "email_by_config", json.StructToMap(sender), 1000*10)
+	if err != nil {
+		msgStr := ""
+		if streamMsg != nil {
+			msgStr = streamMsg.ErrMsg
+		}
+		log.Warnf("Error - send admin notice: %v | msg: %v", err, msgStr)
+	}
 }

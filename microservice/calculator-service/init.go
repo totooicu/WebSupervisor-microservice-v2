@@ -7,7 +7,7 @@ import (
 )
 
 func initService() {
-	if err := stream.LoadConfig("config.json"); err != nil {
+	if err := stream.LoadConfig(); err != nil {
 		log.Fatal("load config error:", err)
 	}
 	if err := stream.Init(); err != nil {

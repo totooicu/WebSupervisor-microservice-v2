@@ -2,10 +2,9 @@ package stream
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"regexp"
-
+ "flag"
 )
 
 // Config 通信库配置
@@ -42,20 +41,15 @@ var (
 	CacheKeyPrefix string
 	)
 
+func ParseOsArgs() *string {
+	config_path:=flag.String("config_path","./config.json","配置文件路径")
+	return config_path
+	}
 
 // LoadConfig 从 JSON 文件读取配置，并解析 ${} 环境变量
-func LoadConfig(path string) error {
-	//从命令行参数"-config"中获取路径
-	args:=os.Args
-	if len(args) == 1 {
-		fmt.Printf("使用默认参数：%s\n",path)
-	}else{
-		path = args[1]
-		fmt.Printf("使用自定义参数：%s\n",args[1])
-	}
+func LoadConfig() error {
+	path:=*ParseOsArgs()
 	
-
-
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return err

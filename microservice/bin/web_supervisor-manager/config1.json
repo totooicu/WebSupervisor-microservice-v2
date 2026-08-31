@@ -5,7 +5,7 @@
     "db": 0
   },
   "stream": {
-    "consumer_stream": "dev:web_supervisor-stream",
+    "consumer_stream": "dev:web_supervisor-stream1",
     "consumer_group": "web_supervisor-group",
     "goroutine_num": 5,
     "get_timeout_ms": 50000,
@@ -20,7 +20,6 @@
     "jobs_path": "./jobs.json",
     "redis_app_name": "web_supervisor",
     "email_tos": [ "${QQ_MAIL_ACCOUNT_2667}"],
-    "email_tos_admin": ["${QQ_MAIL_ACCOUNT_2667}"],
     "interval_second": 120
   }
 }

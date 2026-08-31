@@ -10,10 +10,18 @@ import (
 )
 
 func run_one(job *models.Job) {
+	// 任务级 panic 恢复：致命错误只跳过本次任务，不终止整个服务
+	defer func() {
+		if r := recover(); r != nil {
+			log.Warnf("Error - run_one panic recovered (task skipped): %v", r)
+			services.ReportError(job.Crawler.URL, "run_one", fmt.Sprintf("%v", r))
+		}
+	}()
 	//发送http请求
 	pld, err := services.Crawl(&job.Crawler)
-	if err != nil || (pld["status"]!= nil && pld["status"].(float64) != 200) {
+	if err != nil || (pld["status"] != nil && pld["status"].(float64) != 200) {
 		log.Warnf("Error - Crawl: %v | status: %v", err, pld["status"])
+		services.ReportError(job.Crawler.URL, "crawl", fmt.Sprintf("err=%v status=%v", err, pld["status"]))
 		return
 	}
 	job.Keys.Content = pld["content"].(string)
@@ -21,6 +29,7 @@ func run_one(job *models.Job) {
 	tgt, err := services.Parse(&job.Keys)
 	if err != nil {
 		log.Warnf("Error - Parse: %v", err)
+		services.ReportError(job.Crawler.URL, "parse", err.Error())
 		return
 	}
 	log.Printf(">>> Debug - tgt: %+v", len(tgt))
@@ -31,7 +40,7 @@ func run_one(job *models.Job) {
 	i := 0
 	changed_new_datas := []*models.CacheParameter{} //->map[key][old,new]
 	for k, v := range pd {
-		key:=fmt.Sprintf("%s:%s",job.Crawler.URL,k)
+		key := fmt.Sprintf("%s:%s", job.Crawler.URL, k)
 		newCaches[i] = models.CacheParameter{models.REDIS_APP_NAME, key, v}
 		log.Printf(">>> Debug - k: %s\n", newCaches[i].Key)
 		r, e := services.CacheCompareAndSave(&newCaches[i])
@@ -41,11 +50,13 @@ func run_one(job *models.Job) {
 			rr, e := services.CacheSet(&newCaches[i])
 			if e != nil {
 				log.Warnf("Error - CacheSet: %v\n", e)
+				services.ReportError(job.Crawler.URL, "cache_set", e.Error())
 				continue
 			}
-			
+
 			if rr["error"] != nil && rr["error"].(string) != "" {
 				log.Warnf("Error - CacheSet: %v\n", rr["error"])
+				services.ReportError(job.Crawler.URL, "cache_set", rr["error"].(string))
 				continue
 			}
 			changed_new_datas = append(changed_new_datas, &newCaches[i])
@@ -64,31 +75,30 @@ func run_one(job *models.Job) {
 	job.Caches = newCaches
 	services.EmailNoticeChanged(&changed_new_datas, &job.Crawler.URL)
 
-	log.Infof(">>>执行任务成功")//绿色
+	log.Infof(">>>执行任务成功") //绿色
 
 }
 func runs() {
-	var i int64=0 
-	for{
-		if status,err:= services.PingServices(); err!= nil {
-			log.Warnf("Error - ping_services: %v | status: %s\n", status,err)
+	var i int64 = 0
+	for {
+		if status, err := services.PingServices(); err != nil {
+			log.Warnf("Error - ping_services: %v | status: %s\n", status, err)
 			time.Sleep(time.Second)
 			continue
-		}else{
-			log.Infof(">>>执行ping成功:%s",status)//绿色
+		} else {
+			log.Infof(">>>执行ping成功:%s", status) //绿色
 		}
-		for i,job:=range models.JOBS{
-			log.Printf(">>>执行任务%d %v\n",i,job)
+		for i, job := range models.JOBS {
+			log.Printf(">>>执行任务%d %v\n", i, job)
 			run_one(&job)
 		}
 		i++
-		log.Infof(">>>执行次数：%d 完成",i)
-		for ii:=0;ii<models.INTERVAL_SECONDS;ii++{
-			fmt.Printf(">>>等待%d秒，还需等待%d秒\r",ii,models.INTERVAL_SECONDS-ii)
+		log.Infof(">>>执行次数：%d 完成", i)
+		for ii := 0; ii < models.INTERVAL_SECONDS; ii++ {
+			fmt.Printf(">>>等待%d秒，还需等待%d秒\r", ii, models.INTERVAL_SECONDS-ii)
 			time.Sleep(time.Second)
 		}
-		
-	}
 
+	}
 
 }

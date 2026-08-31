@@ -1,0 +1,22 @@
+{
+  "redis": {
+    "addr": "localhost:6379",
+    "password": "",
+    "db": 0
+  },
+  "stream": {
+    "consumer_stream": "dev:redis_cache-stream",
+    "consumer_group": "redis_cache-group",
+    "goroutine_num": 5,
+    "get_timeout_ms": 5000,
+    "max_message_bytes": 204800,
+    "cache_key_prefix":"redis_cache:"
+  },
+  "custom": {
+      "redis": {
+    "addr": "localhost:6379",
+    "password": "",
+    "db": 0
+  }
+  }
+}
