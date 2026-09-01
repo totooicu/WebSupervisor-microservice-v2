@@ -2,6 +2,15 @@ package string
 
 import (
 	"regexp"
+"unicode/utf8"
+    "bytes"
+    "fmt"
+    "io/ioutil"
+"golang.org/x/text/encoding/simplifiedchinese"
+ "github.com/saintfish/chardet"
+//    "golang.org/x/text/encoding"
+    "golang.org/x/text/encoding/htmlindex"
+    "golang.org/x/text/transform"
 )
 
 type MyString struct {
@@ -98,3 +107,34 @@ func GetMid(src, rlstr, rrstr string, op byte) []string {
 	return res
 }
 
+// ConvertToUTF8 自动检测字符集并转换为 UTF-8
+func ConvertToUTF8(data []byte) ([]byte, error) {
+    // 1. 快速检测是否为合法 UTF-8（同时包含纯 ASCII）
+    if utf8.Valid(data) {
+        return data, nil
+    }
+
+    // 2. 使用 chardet 检测字符集
+    detector := chardet.NewTextDetector()
+    result, err := detector.DetectBest(data)
+    if err != nil {
+        // 检测失败，尝试使用 HTML 标准字符集检测（通过 BOM 或 meta）
+        // 这里简单回退：假设为 GBK（可根据业务调整）
+        result = &chardet.Result{Charset: "GB18030"}
+    }
+
+    // 3. 根据检测到的字符集获取 encoding.Encoding
+    enc, err := htmlindex.Get(result.Charset)
+    if err != nil {
+        // 尝试使用其他常见编码名称
+        enc = simplifiedchinese.GBK // 回退到 GBK
+    }
+
+    // 4. 转换为 UTF-8
+    reader := transform.NewReader(bytes.NewReader(data), enc.NewDecoder())
+    utf8Bytes, err := ioutil.ReadAll(reader)
+    if err != nil {
+        return nil, fmt.Errorf("转换失败: %v", err)
+    }
+    return utf8Bytes, nil
+}

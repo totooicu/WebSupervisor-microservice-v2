@@ -4,7 +4,8 @@
   "intervalSecond": 120,
   "urls": [
     {
-      "url": "https://sci.zstu.edu.cn/zsjy/yjszs.htm",
+      "enable": false,
+      "url": "https://jsjxy.zstu.edu.cn/index.htm",
       "output": "./resource/output/zstu.html",
       "test": false,
       "header": {
@@ -15,387 +16,57 @@
       },
       "method": "GET",
       "body": {
-                "Accept-Encoding": "gzip, deflate"
-
       },
       "type": "html",
       "jsonKeys": [],
+      "xPathKeys": [{"xpath":"/html/body/div[6]/div[1]/div/div[2]/ul/li","attrName":""},
+      {"xpath":"/html/body/div[6]/div[2]/div[1]/dl/dd","attrName":""},
+      {"xpath":"/html/body/div[6]/div[2]/div[2]/dl/dd","attrName":""},
+      {"xpath":"/html/body/div[6]/div[2]/div[3]/dl/dd","attrName":""}],
+      "htmlKeys": []
+    },{
+      "enable": false,
+      "url": "https://ieeexplore.ieee.org/rest/search",
+      "method": "POST",
+      "output": "./resource/output/zstu.html",
+      "test": false,
+      "header": 
+{
+	"accept":"application/json, text/plain, */*",
+	"referer":"https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=Salient%20Object%20Detection%20in%20Optical%20Remote%20Sensing%20Images&highlight=true&returnType=SEARCH&matchPubs=true&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=100&pageNumber=1",
+"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0",
+"x-security-request":"required",
+"sec-ch-ua":"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"150\", \"Microsoft Edge\";v=\"150\"",
+  "Cookie": "hum_ieee_visitor=0f27e76d-657f-4aca-ac83-831273204d6c; hum_ieee_synced=true; AMCV_8E929CC25A1FB2B30A495C97%40AdobeOrg=0%7CMCMID%7C73254357901763077332194397235230773723; s_ecid=MCMID%7C73254357901763077332194397235230773723; s_ecid=MCMID%7C73254357901763077332194397235230773723; s_fid=4519DB78EFE54966-159752891F0F08A4; utag_main=v_id:019a86e9e425002277bd32a13c1e0507d003607500bd0$_sn:23$_se:1$_ss:1$_st:1770726580635$vapi_domain:ieeexplore.ieee.org$ses_id:1770724780635%3Bexp-session$_pn:1%3Bexp-session; _ga_GDM13S26ST=GS2.1.s1774437118$o1$g1$t1774437197$j60$l0$h0; _ga_3J2P9TS39S=GS2.1.s1774437181$o1$g1$t1774437197$j50$l0$h0; _ga_F8HBTM7BWH=GS2.1.s1774437181$o1$g1$t1774437197$j50$l0$h0; LT=XPLLG_XPL_2023_SUB_Xplore_Popup; _gcl_au=1.1.69478667.1787019968; _ga=GA1.2.2060814026.1774437119; _uetvid=2f3f97b09aac11f19dea671178da64e6; _ga_F0XQ5J74J2=GS2.1.s1787019967$o1$g0$t1787019985$j42$l0$h0; kndctr_8E929CC25A1FB2B30A495C97_AdobeOrg_identity=CiY3MzI1NDM1NzkwMTc2MzA3NzMzMjE5NDM5NzIzNTIzMDc3MzcyM1IRCJmM%2DPjaMxgBKgRTR1AzMAPwAczz2N6FNA%3D%3D; kndctr_8E929CC25A1FB2B30A495C97_AdobeOrg_cluster=sgp3; xpluserinfo=eyJpc0luc3QiOiJ0cnVlIiwiaW5zdE5hbWUiOiJaaGVKaWFuZyBTY2ktVGVjaCBVbml2ZXJzaXR5IiwicHJvZHVjdHMiOiJJRUx8VkRFfE5PS0lBIEJFTEwgTEFCU3wifQ==; ERIGHTS=gXjt5SJn9dgblY6ItozLrhy7p7ZTvrx2Fp*OrPXqzLTKDJLwlDX504lIAx3Dx3D-18x2dnDY8gxxQfQjhXHx2B5eWMaQbwx3Dx3DDisS383uavQKBlOjZ26RVwx3Dx3D-xxSjPuM2fUIr39FKIZ7DE4wx3Dx3D-UVhlBx2FP29HQDntaSxx2dV2wx3Dx3D; seqId=1513111; xpluserinfo=eyJpc0luc3QiOiJ0cnVlIiwiaW5zdE5hbWUiOiJaaGVKaWFuZyBTY2ktVGVjaCBVbml2ZXJzaXR5IiwicHJvZHVjdHMiOiJJRUx8VkRFfE5PS0lBIEJFTEwgTEFCU3wifQ==; AWSALBAPP-0=AAAAAAAAAAAPtChibwTiFJbwqWTZ14ckgTfM1wcLfOUG4pCekQX3ybXgS1vESXZDCM5Qww7E1p+gy8qB1XvxtNTJJKrpM2x1huEqR5kr0Ba/ZOvGgdGupQZMOKlKGad1J3w4I7ohub7vzfwvJsLmye1kDWhsFt2QGcAi+BguXsVgTplXGEY4eXCEtMjqlYqTM0xqKLoCssVHu2bVh/iRkw==; AWSALBAPP-1=_remove_; AWSALBAPP-2=_remove_; AWSALBAPP-3=_remove_; WLSESSION=570651146.47873.0000; TS016349ac=01f15fc87cf916b990db4bb5f3a3ba9399a0669e0b4619a129e4e67250322d9d616fd4a560e5372829d8de7c4ab1e2b9f4ef805b2d; TS8b476361027=0807dc117eab2000565c93979aaafa8827f6c9e90b2346c9dfe6383433311a487491778ef7c4d90b08769180dd113000f4be4afe453a8c2e8f022536b74b3a98088d132cdf4251af669590e085c555da21002b4ec48b30f40b119052a416c0ea; JSESSIONID=C11FFD2F5D937A3AA933D41CEAC7437F; ipList=115.236.14.167",
+   "content-type": "application/json",
+   "Host": "ieeexplore.ieee.org",
+   "Connection": "keep-alive"
+},
+      "body": {},
+      "type": "json",
+      "str_payload":"{\"queryText\":\"Salient Object Detection in Optical Remote Sensing Images\",\"highlight\":true,\"returnType\":\"SEARCH\",\"matchPubs\":true,\"refinements\":\"[\"ContentType:Journals\"]\",\"returnFacets\":[\"ALL\"],\"rowsPerPage\":\"100\",\"pageNumber\":\"1\"}",
+      "jsonKeys": [{"path":["records",-1],"key":[".*"]}],
       "xPathKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<div class=\"main-right-text\">",
-          "right": "<script>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://cmt.zstu.edu.cn/zsjy/yjszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<li id=\"line_u9_\\d+\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://mse.zstu.edu.cn/zsxx.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<div class=\"list_plaintext mt\">",
-          "right": "</div>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://fzxy.zstu.edu.cn/zsjy2/yjszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<li id=\"line_u6_\\d+\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://mechanical.zstu.edu.cn/yjsjy/zsxx.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<li id=\"line_u10_\\d+\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://jsjxy.zstu.edu.cn/zsjy1/ssszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<dd id=\"line_u9_\\d+\">",
-          "right": "</dd>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://sise.zstu.edu.cn/dasd/ssszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<ul class=\"list\" style=\"min-height:550px\">",
-          "right": "<div align=\"center\">",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://jiangong.zstu.edu.cn/index/tzgg.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<span class=\"ddd\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://sky.zstu.edu.cn/tzgg.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<ul>",
-          "right": "</ul>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://scce.zstu.edu.cn/zsjy/yjszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<li id=\"line_u10_\\d+\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://sem.zstu.edu.cn/jxx/ssxm.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<dd id=\"line_u8_\\d+\">",
-          "right": "</dd>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://ad.zstu.edu.cn/zsjy/yjszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<li id=\"line_u8_\\d+\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://law.zstu.edu.cn/zsjy/yjszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<dd id=\"line_u8_\\d+\">",
-          "right": "</dd>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://waiyu.zstu.edu.cn/yjsjy.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<li id=\"line_u7_\\d+\">",
-          "right": "</li>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://mks.zstu.edu.cn/yjsjy1/zs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<LI id=\"line_u7_\\d+\">",
-          "right": "</LI>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://yjs.suda.edu.cn/8386/list.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "gradadmission.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<ul>",
-          "right": "</ul>",
-          "key": [".*"]
-        }
-      ]
-    },
-    {
-      "url": "https://gradadmission.zstu.edu.cn/sszs.htm",
-      "output": "./resource/output/zstu.html",
-      "test": false,
-      "header": {
-        "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
-        "Accept": "*/*",
-        "Host": "jwc.zstu.edu.cn",
-        "Connection": "keep-alive"
-      },
-      "method": "GET",
-      "body": {},
-
-      "type": "html",
-      "jsonKeys": [],
-      "htmlKeys": [
-        {
-          "left": "<ul>",
-          "right": "</ul>",
-          "key": [".*"]
-        }
-      ]
+      "htmlKeys": []
     }
-  ]
+  ],
+  "commands": [{
+    "command": "cd ../../../test && go run .",
+    "enable": true,
+    "dir":"",
+    "timeout_ms": 300000,
+      "jsonKeys": [{"path":["records",-1],"key":[".*"]}],
+      "xPathKeys": [],
+      "htmlKeys": []
+  },{
+    "command": "ls",
+    "args":"",
+    "dir":"./",
+    "enable": false,
+    "timeout_ms": 30000,
+      "jsonKeys": [{"path":["records",-1],"key":[".*"]}],
+      "xPathKeys": [],
+      "htmlKeys": []
+  }
+]
 }

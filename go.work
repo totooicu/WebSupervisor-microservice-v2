@@ -1,6 +1,7 @@
 go 1.25.0
 
 use (
+	./test
 	./MyTool
 	./microservice/template-microservice/microservice-manager
 	./microservice/template-microservice/calculator-service

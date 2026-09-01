@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/totooicu/go-mytool/json"
+	"errors"
 )
 
 var (
@@ -18,3 +19,4 @@ var (
 	JOBS []Job
 
 )
+var ErrCommandTimeout = errors.New("command execution timed out")

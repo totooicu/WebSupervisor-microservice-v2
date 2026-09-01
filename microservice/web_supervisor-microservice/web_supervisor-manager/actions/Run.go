@@ -9,6 +9,28 @@ import (
 	"github.com/totooicu/web_supervisor-manager/services"
 )
 
+func get_url_content(crawler *models.CrawlerParameter)(string,error){
+		pld, err := services.Crawl(crawler)
+	if err != nil || (pld["status"] != nil && pld["status"].(float64) != 200) {
+		log.Warnf("Error - Crawl: %v | status: %v", err, pld["status"])
+		services.ReportError(crawler.URL, "crawl", fmt.Sprintf("err=%v status=%v", err, pld["status"]))
+		return "", err
+		}
+	return pld["content"].(string), nil
+}
+func get_conmamd_content(command *models.CommandParameter)(string,error){
+		ctt,Err:=services.RunCommand(command)
+	switch Err{
+		case nil:
+			break
+		default://严重错误
+			log.Warnf("Error - RunCommand: %v", Err)
+			services.ReportError(command.Command, "execute", fmt.Sprintf("%v", Err))
+			return "", Err
+	}
+	return ctt, nil
+}
+
 func run_one(job *models.Job) {
 	// 任务级 panic 恢复：致命错误只跳过本次任务，不终止整个服务
 	defer func() {
@@ -17,14 +39,22 @@ func run_one(job *models.Job) {
 			services.ReportError(job.Crawler.URL, "run_one", fmt.Sprintf("%v", r))
 		}
 	}()
+	var err error
 	//发送http请求
-	pld, err := services.Crawl(&job.Crawler)
-	if err != nil || (pld["status"] != nil && pld["status"].(float64) != 200) {
-		log.Warnf("Error - Crawl: %v | status: %v", err, pld["status"])
-		services.ReportError(job.Crawler.URL, "crawl", fmt.Sprintf("err=%v status=%v", err, pld["status"]))
+	switch job.JobType{
+	case "url":
+		job.Keys.Content, err = get_url_content(&job.Crawler) ;break
+	case "command":
+		 job.Keys.Content, err = get_conmamd_content(&job.Command) ;break
+	}
+	if err != nil {
+		log.Warnf("Error - get_conmamd_content: %v", err)
+		services.ReportError(job.Crawler.URL, "get_conmamd_content", err.Error())
 		return
 	}
-	job.Keys.Content = pld["content"].(string)
+	
+
+
 	//解析html
 	tgt, err := services.Parse(&job.Keys)
 	if err != nil {

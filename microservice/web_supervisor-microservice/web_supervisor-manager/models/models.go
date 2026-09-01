@@ -15,9 +15,16 @@ type EmailRequestByConfig struct {//根据配置发送邮件
 
 //爬取-Keys->解析-Cache->缓存
 type Job struct {
+	JobType  string `json:"job_type"`
 	Crawler CrawlerParameter `json:"crawle"`
+	Command CommandParameter `json:"command"`
 	Keys    ParserParameter    `json:"keys"`
 	Caches   []CacheParameter      `json:"caches"`
+}
+type CommandParameter struct { 
+	Command string `json:"command"`
+	Dir string `json:"dir"`
+	TimeoutMs int `json:"timeout_ms"`
 }
 
 // CrawlerParameter 爬虫服务参数结构体

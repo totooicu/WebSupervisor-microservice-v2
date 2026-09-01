@@ -8,12 +8,59 @@ import (
 	"github.com/totooicu/go-mytool/encryption"
 	"github.com/totooicu/go-mytool/json"
 	"github.com/totooicu/go-mytool/stream"
+	myString "github.com/totooicu/go-mytool/string"
+	"os/exec"
+	"bytes"
+	"errors"
+	"context"
 	"github.com/totooicu/web_supervisor-manager/models"
 )
 
 // 错误去重缓存有效期：同一签名在此期间重复出现只向管理员告警一次
 var errorDedupTTL = 24 * time.Hour
 
+func RunCommand(p *models.CommandParameter) (string, error) {
+    var cmd *exec.Cmd
+    var cancel context.CancelFunc
+
+    if p.TimeoutMs > 0 {
+        timeout := time.Duration(p.TimeoutMs) * time.Millisecond
+        ctx, c := context.WithTimeout(context.Background(), timeout)
+        cancel = c
+        defer cancel()
+        cmd = exec.CommandContext(ctx, "cmd","/C",p.Command)
+    } else {
+        cmd = exec.Command("cmd","/C",p.Command)
+    }
+
+    cmd.Dir = p.Dir
+
+    var stdout, stderr bytes.Buffer
+    cmd.Stdout = &stdout
+    cmd.Stderr = &stderr
+
+    err := cmd.Run()
+	d,_:=myString.ConvertToUTF8(stdout.Bytes())
+	log.Printf(">>> Debug - RunCommand utf8: %s", string(d))
+	stderr_utf8,_:=myString.ConvertToUTF8(stderr.Bytes())
+
+    if err != nil {
+		err_utf8,_:=myString.ConvertToUTF8([]byte(fmt.Sprintf("%v",err)))
+		log.Printf(">>> Debug - RunCommand utf8 stderr: %s", string(stderr_utf8))
+		log.Printf(">>> Debug - RunCommand utf8 err: %s", string(err_utf8))
+        // 检查是否是超时错误
+        if errors.Is(err, context.DeadlineExceeded) {
+            return stdout.String(), fmt.Errorf("%w: %v", models.ErrCommandTimeout, err)
+        }
+        // 其他错误，附加上 stderr 内容
+        if stderr.Len() > 0 {
+            return stdout.String(), fmt.Errorf("%v: %s", err, string(stderr_utf8))
+        }
+        return stdout.String(), err
+    }
+
+    return stdout.String(), nil
+}
 func Crawl(p *models.CrawlerParameter) (map[string]any, error) {
 	log.Printf(">>> Debug - Send http_request")
 	streamMsg, err := stream.Send(models.CRAWLER_SERVICE, "http_request", json.StructToMap(p), 1000*60*2) //->{"content":"","status":0}
@@ -27,17 +74,21 @@ func Crawl(p *models.CrawlerParameter) (map[string]any, error) {
 	}
 	return streamMsg.Playload, nil
 }
+
 func Parse(p *models.ParserParameter) (map[string]any, error) {
 	log.Printf(">>> Debug - p: v %v %v %v", p.HTMLKeys, p.XPathKeys, p.JSONKeys)
 	serv := ""
 	if p.HTMLKeys != nil && len(p.HTMLKeys) != 0 {
 		serv = "parse_html_by_get_mid"
+		log.Printf(">>> Debug - p.HTMLKeys: %v", p.HTMLKeys)
 	}
 	if p.XPathKeys != nil && len(p.XPathKeys) != 0 {
 		serv = "parse_html_by_xpath"
+		log.Printf(">>> Debug - p.XPathKeys: %v", p.XPathKeys)
 	}
 	if p.JSONKeys != nil && len(p.JSONKeys) != 0 {
 		serv = "parse_json"
+		log.Printf(">>> Debug - p.JSONKeys: %v", p.JSONKeys)
 	}
 	// log.Printf(">>> Debug - serv: %s", serv)
 	// return nil, fmt.Errorf("serv is empty")
@@ -51,7 +102,7 @@ func Parse(p *models.ParserParameter) (map[string]any, error) {
 		p.HTMLKeys[0]["keys"] = []string{".*"}
 	}
 	log.Printf(">>> Debug - serv: %s", serv)
-	log.Printf(">>> Debug - send parse request ")
+	log.Printf(">>> Debug - send parse request")
 	streamMsg, err := stream.Send(models.PARSER_SERVICE, serv, json.StructToMap(p), 1000*10)
 	//parse_html_by_xpath->{"parsed_data":map[string]([]string)}, parsed_data[xpath]=[content]
 	//parse_html_by_get_mid->{"parsed_data":map[string]([]string)[]string}, parsed_data[key]=[content], key:=fmt.Sprintf("[%s,%s,%s]",params.HTMLKeys[ii].Left,params.HTMLKeys[ii].Right,params.HTMLKeys[ii].Keys)

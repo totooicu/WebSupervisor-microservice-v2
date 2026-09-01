@@ -22,5 +22,5 @@ type ParserParameter struct {
 	Content  string    `json:"content"`
 	HTMLKeys []HTMLKey `json:"htmlKeys"`
 	JSONKeys []JSONKey `json:"jsonKeys"`
-	XPaths   []XPathKey  `json:"xPaths"`
+	XPaths   []XPathKey  `json:"xpathKeys"`
 }

@@ -51,7 +51,7 @@ func HandleParseHTMLByGetMid(msg *stream.StreamMessage) {
 	}
 	
 
-	log.Printf("Debug - HTML parse completed, found %d results", len(resultss))
+	log.Printf("Debug - HTML parse by get mid completed, found %d results", len(resultss))
 	paramData := map[string]interface{}{
 		"parsed_data": resultss,
 	}
@@ -69,6 +69,7 @@ func HandleParseHTMLByXPath(msg *stream.StreamMessage){
 		log.Printf("Error unmarshalling playload: %v", err)
 		return
 	}
+	// log.Printf(">>>Debug - HTML parse by xpath params: XPathKeys=%v, content length=%d", string(playloadData), len(playloadData))
 	
 	XPaths:=params.XPaths
 	content:=params.Content
@@ -86,7 +87,7 @@ func HandleParseHTMLByXPath(msg *stream.StreamMessage){
 		}
 	}
 
-	log.Printf("Debug - HTML parse completed, found %d results", len(results))
+	log.Printf("Debug - HTML parse by xpath completed, found %d results", len(results))
 
 
 	paramData := map[string]interface{}{
