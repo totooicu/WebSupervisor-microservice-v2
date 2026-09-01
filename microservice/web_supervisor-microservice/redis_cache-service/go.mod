@@ -1,8 +1,8 @@
-module github.com/totooicu/crawler-service
+module github.com/totooicu/redis_cache-service
 
 go 1.25.0
 
-replace github.com/totooicu/go-mytool => ../../MyTool
+replace github.com/totooicu/go-mytool => ../../../MyTool
 
 require (
 	github.com/sirupsen/logrus v1.10.2

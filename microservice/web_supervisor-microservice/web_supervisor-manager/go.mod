@@ -2,7 +2,7 @@ module github.com/totooicu/web_supervisor-manager
 
 go 1.25.0
 
-replace github.com/totooicu/go-mytool => ../../MyTool
+replace github.com/totooicu/go-mytool => ../../../MyTool
 
 require (
 	github.com/sirupsen/logrus v1.10.2

@@ -1,8 +1,8 @@
-module github.com/totooicu/calculator-service
+module github.com/totooicu/microservice-manager
 
 go 1.25.0
 
-replace github.com/totooicu/go-mytool => ../../MyTool
+replace github.com/totooicu/go-mytool => ../../../MyTool
 
 require github.com/totooicu/go-mytool v0.0.0-00010101000000-000000000000
 
