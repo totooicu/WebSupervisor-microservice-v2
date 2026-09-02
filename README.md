@@ -28,21 +28,17 @@ WebSupervisor-microservice-v2/
 
 ## 整体架构
 
-```
-        ┌─────────────────────────────┐
-        │  web_supervisor-manager      │ 编排器：定时执行 jobs.json 监控任务
-        │  microservice-manager        │ 示例客户端：演示如何调用各服务
-        └──────────────┬──────────────┘
-                       │ stream.Send(targetStream, service, payload, timeout)
-                       ▼
-              ┌─────────────────┐
-              │  Redis Streams  │   所有消息（请求/响应）都经 Redis 中转
-              └─────────────────┘
-   ┌───────────┬───────────┬──────────────┬────────────┬─────────────┐
-   ▼           ▼           ▼              ▼            ▼             ▼
-crawler-    parser-     redis_cache-    email-      calculator-    （任意新增的
-service     service      service        service      service        服务...）
-```
+![web_supervisor-microservice流程结构](hints/web_supervisor-microservice流程结构.png)
+web_supervisor-microservice流程结构
+
+
+![stream初始化过程](hints/stream初始化过程.png)
+stream初始化过程
+
+
+![stream消息发送接收过程](hints/stream消息发送接收过程.png)
+stream消息发送接收过程
+
 
 一次调用的完整链路：
 
