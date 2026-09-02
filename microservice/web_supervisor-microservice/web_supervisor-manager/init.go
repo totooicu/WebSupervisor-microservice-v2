@@ -86,10 +86,10 @@ func initURLJobs (jobs_arr_any []any) {
 		}
 
 		header_string_any := AnyToX[map[string]any](job["header"])
-		header_string_string := map[string]string{}
-		for k, v := range header_string_any {
-			header_string_string[k] = v.(string)
-		}
+		// header_string_string := map[string]string{}
+		// for k, v := range header_string_any {
+		// 	header_string_string[k] = v.(string)
+		// }
 		body_string_any := AnyToX[map[string]any](job["body"])
 		body_string_string := map[string]any{}
 		for k, v := range body_string_any {
@@ -98,7 +98,7 @@ func initURLJobs (jobs_arr_any []any) {
 		crawler := &models.CrawlerParameter{
 			URL:        AnyToX[string](job["url"]),
 			Method:     AnyToX[string](job["method"]),
-			Header:     header_string_string,
+			Header:     header_string_any,
 			Body:       AnyToX[map[string]any](job["body"]),
 			StrPayload: AnyToX[string](job["str_payload"]),
 		}

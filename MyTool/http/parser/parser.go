@@ -26,7 +26,7 @@ func ParseHTML(content string, keys []string) []string {
 
 
 func ParseJSON(content string, jsonKeys []string) map[string][]any {
-	var data interface{}
+	var data any
 	if err := json.Unmarshal([]byte(content), &data); err != nil {
 		return nil
 	}
@@ -43,16 +43,16 @@ func ParseJSON(content string, jsonKeys []string) map[string][]any {
 	return results
 }
 
-func GetJSONValue(data interface{}, path []string) interface{} {
+func GetJSONValue(data any, path []string) any {
 	for _, key := range path {
 		switch v := data.(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			if val, ok := v[key]; ok {
 				data = val
 			} else {
 				return nil
 			}
-		case []interface{}:
+		case []any:
 			if idx, err := fmt.Sscanf(key, "%d"); err == nil {
 				if idx >= 0 && idx < len(v) {
 					data = v[idx]

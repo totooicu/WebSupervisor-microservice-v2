@@ -11,13 +11,13 @@ import (
 
 type HttpHeader struct {
 	Url        string
-	Header     map[string]string
+	Header     map[string]any
 	response   *http.Response
 	bodyString string
 	statusCode int
 }
 
-func NewHttpHeader(url string, header map[string]string) *HttpHeader {
+func NewHttpHeader(url string, header map[string]any) *HttpHeader {
 	return &HttpHeader{Url: url, Header: header}
 }
 func (this *HttpHeader) Get(param string) *HttpHeader {
@@ -29,7 +29,7 @@ func (this *HttpHeader) Get(param string) *HttpHeader {
 		fmt.Print("HttpClient Get req 失败", err)
 	}
 	for k, v := range this.Header {
-		req.Header.Add(k, v)
+		req.Header.Add(k, v.(string))
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -56,7 +56,7 @@ func (this *HttpHeader) Post(data map[string]any, stringPlayLoad string) *HttpHe
 	fmt.Print(">>>HttpClient [url,jsonData]", this.Url, jsonData)
 	for k, v := range this.Header {
 		//fmt.Print(">>>HttpClient header:", k, v)
-		req.Header.Add(k, v)
+		req.Header.Add(k, v.(string))
 	}
 
 	resp, err := client.Do(req)

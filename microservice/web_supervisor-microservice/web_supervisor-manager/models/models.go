@@ -31,7 +31,7 @@ type CommandParameter struct {
 type CrawlerParameter struct {
 	URL        string                 `json:"url"`
 	Method     string                 `json:"method"`
-	Header    map[string]string      `json:"header"`
+	Header    map[string]any      `json:"header"`
 	Body       map[string]any `json:"body"`
 	StrPayload string                 `json:"str_payload"`
 }
@@ -56,4 +56,20 @@ type MonitorParameter struct {
 	JobID         string           `json:"job_id"`
 	Interval      int              `json:"interval"`
 	CrawlerParams CrawlerParameter `json:"crawler_params"`
+}
+// HTMLKey HTML解析键结构体
+type HTMLKey struct {
+	Left  string   `json:"left"`
+	Right string   `json:"right"`
+	Keys  []string `json:"key"`
+}
+
+// JSONKey JSON解析键结构体
+type JSONKey struct {
+	Path []interface{} `json:"path"`
+	Keys []string      `json:"key"`
+}
+type XPathKey struct {
+	XPath string `json:"xpath"`
+	AttrName string `json:"attrName"`
 }

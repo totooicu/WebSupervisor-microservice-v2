@@ -9,7 +9,7 @@ type HTMLKey struct {
 
 // JSONKey JSON解析键结构体
 type JSONKey struct {
-	Path []interface{} `json:"path"`
+	Path []any `json:"path"`
 	Keys []string      `json:"key"`
 }
 type XPathKey struct {
