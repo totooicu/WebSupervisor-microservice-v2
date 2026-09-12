@@ -1,0 +1,76 @@
+# ===== 大模型请求转发器配置 =====
+# 文档见 llm_forward.py 顶部注释。所有路径/密钥请按实际环境修改。
+
+# ---------- 对外监听 ----------
+server:
+  listen: 0.0.0.0:8080          # 监听地址:端口
+  api_keys: []                   # 访问代理所需的 Bearer Key; 空列表=不鉴权
+                                 # 例: ["sk-proxy-xxx"] -> 客户端需带 Authorization: Bearer sk-proxy-xxx
+
+# ---------- GPU 状态检查 ----------
+gpu:
+  check_interval: 10             # 秒: 状态缓存 TTL, 也是后台巡检间隔
+  ssh_timeout: 8                 # 秒: 单次 SSH 检查超时 (连接+执行)
+  on_ssh_fail: busy              # SSH 检查失败时的策略:
+                                 #   busy  -> 视为繁忙, 走网络模型
+                                 #   idle  -> 视为空闲, 走本地模型
+                                 #   error -> 返回 502 错误
+
+request_timeout: 600             # 秒: 上游请求整体超时 (含流式生成)
+
+# ---------- GPU 服务器池 ----------
+# 每台: SSH 连接 + 本地 ollama 端点 + 检查命令
+servers:
+  server_4090:
+    ssh:
+      host: 192.168.1.10
+      port: 22
+      user: ubuntu
+      # 认证二选一 (密钥 / 密码):
+      key_file: ~/.ssh/id_rsa
+      # password: "your-password"
+      # passphrase: ""             # 私钥口令 (若有)
+      known_hosts: null             # null=不校验主机密钥(方便但有风险); 可填 known_hosts 路径
+    local_endpoint: http://192.168.1.10:11434   # 该机 ollama 端点 (空闲时转发到此)
+    check_command: "python3 /opt/llm-forwarder/gpu_monitor.py"   # SSH 执行的检查命令
+    idle_keyword: "true"            # 命令 stdout(去空白+小写) 含此词 => 视为空闲
+    # 也可用内联命令 (无需部署 gpu_monitor.py), 例: 利用率<30 且 单卡显存<8GB 视为空闲:
+    # check_command: "nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits | awk 'NR==1{exit !(1<30 && $2<8000)}'"
+
+  server_3090:
+    ssh:
+      host: 192.168.1.11
+      port: 22
+      user: ubuntu
+      key_file: ~/.ssh/id_rsa
+      known_hosts: null
+    local_endpoint: http://192.168.1.11:11434
+    check_command: "python3 /opt/llm-forwarder/gpu_monitor.py"
+    idle_keyword: "true"
+
+# ---------- 网络模型上游 (GPU 繁忙时) ----------
+# 可配置任意 OpenAI 兼容端点; ollama 端点可选。
+network_upstream:
+  openai:
+    base_url: https://api.openai.com/v1   # OpenAI 兼容根 (含 /v1)
+    api_key: sk-xxx                        # 上游 Key
+  ollama:                                  # 可选; 留空则 ollama 协议请求繁忙时自动转 openai 上游 (格式转换)
+    base_url: ""
+    api_key: ""
+
+# ---------- 模型路由: 请求模型名 -> {服务器, 本地模型, 网络模型} ----------
+# 按模型名映射到指定服务器; 两台都空闲时由模型路由决定用哪台。
+models:
+  qwen2.5:32b:
+    server: server_4090
+    local_model: qwen2.5:32b
+    network_model: gpt-4o-mini
+  deepseek-r1:14b:
+    server: server_3090
+    local_model: deepseek-r1:14b
+    network_model: deepseek-chat
+  # 兜底: 未匹配的模型名走这里
+  default:
+    server: server_4090
+    local_model: qwen2.5:32b
+    network_model: gpt-4o-mini
